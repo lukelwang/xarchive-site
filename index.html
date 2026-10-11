@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: https://cdn.jsdelivr.net; connect-src 'none'; object-src 'none'; frame-src 'none'; base-uri 'none'">
+  <title>X Archive</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+  <script defer src="data/posts.js"></script>
+  <!-- data/posts-ohiain.js is loaded by js/app.js the first time the ohiain archive is shown -->
+  <script defer src="js/app.js"></script>
+</head>
+<body data-account="1chartmaster" data-sort="desc">
+  <a class="skip-link" href="#feed">Skip to posts</a>
+  <header class="mobile-bar">
+    <div class="mobile-title account-switch" role="group" aria-label="Archive account">
+      <button class="account-tab" type="button" data-account="1chartmaster" aria-pressed="true">1ChartMaster</button>
+      <button class="account-tab" type="button" data-account="ohiain" aria-pressed="false">ohiain</button>
+    </div>
+    <button id="filters-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Filters</button>
+  </header>
+  <button id="overlay-backdrop" class="overlay-backdrop" type="button" aria-label="Close filters" hidden></button>
+  <div class="layout">
+    <aside id="sidebar" class="sidebar" aria-label="Archive filters and day index">
+      <div class="sidebar-heading">
+        <h1>X <span>Archive</span></h1>
+        <button id="filters-close" type="button" aria-label="Close filters">×</button>
+      </div>
+      <div class="account-tabs" role="group" aria-label="Archive account">
+        <button class="account-tab" type="button" data-account="1chartmaster" aria-pressed="true">1ChartMaster</button>
+        <button class="account-tab" type="button" data-account="ohiain" aria-pressed="false">ohiain</button>
+      </div>
+      <p id="archive-summary" class="archive-summary"></p>
+      <form id="filter-form" role="search">
+        <label for="search">Search archive</label>
+        <input id="search" type="search" autocomplete="off" placeholder='Text, $TICKER, "phrase"' aria-describedby="search-help">
+        <p id="search-help" class="help">All terms must match. Plain words match from the start of a word. Use quotes for an exact phrase, $ for an exact ticker, or YYYY-MM-DD for one day.</p>
+        <fieldset class="image-filter">
+          <legend>Images</legend>
+          <label><input type="radio" name="images" value="all" checked> All</label>
+          <label><input type="radio" name="images" value="with"> With</label>
+          <label><input type="radio" name="images" value="without"> Without</label>
+        </fieldset>
+        <div class="date-filters">
+          <label for="from">From<input id="from" type="date"></label>
+          <label for="to">To<input id="to" type="date"></label>
+        </div>
+        <fieldset class="image-filter sort-filter">
+          <legend>Order</legend>
+          <label><input type="radio" name="sort" value="desc" checked> Newest first</label>
+          <label><input type="radio" name="sort" value="asc"> Oldest first</label>
+        </fieldset>
+        <p id="result-count" class="result-count" role="status" aria-live="polite"></p>
+        <div class="results-row"><button id="clear-filters" type="button">Clear filters</button></div>
+        <span id="sort-status" class="visually-hidden" aria-live="polite"></span>
+        <p class="help keys">Keys: j / k next or previous post · ← / → in the image viewer.</p>
+      </form>
+      <nav id="day-index" class="day-index" aria-label="Posts by day"></nav>
+    </aside>
+    <main id="feed" class="feed" tabindex="-1" aria-label="Archived posts">
+      <div id="filter-bar" class="filter-bar" hidden>
+        <span id="filter-count" class="filter-count"></span>
+        <span id="filter-chips" class="filter-chips"></span>
+        <button id="filter-bar-clear" class="filter-bar-clear" type="button">Clear</button>
+      </div>
+      <p id="jump-note" class="jump-note" role="status" hidden><span id="jump-note-text">Filters were cleared to show this post.</span> <button id="jump-restore" type="button">Restore filters</button><button id="jump-note-close" type="button" aria-label="Dismiss">×</button></p>
+      <div id="posts"></div>
+      <div id="feed-status" class="feed-status" role="status" hidden><p id="feed-status-text"></p><button id="feed-status-retry" type="button" hidden>Try again</button></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <h2>No matching posts</h2>
+        <p>Try a different search or date range, or clear the filters.</p>
+        <button id="empty-clear" type="button">Clear all filters</button>
+      </div>
+    </main>
+  </div>
+  <button id="back-to-top" class="back-to-top" type="button" hidden>↑ Top</button>
+  <dialog id="lightbox" class="lightbox" aria-label="Image viewer">
+    <div class="lightbox-toolbar">
+      <button id="image-previous" type="button" aria-label="Previous image">←</button>
+      <span id="image-counter" aria-live="polite"></span>
+      <button id="image-next" type="button" aria-label="Next image">→</button>
+      <button id="image-zoom" type="button" aria-pressed="false" title="Toggle actual size (or click the image)">100%</button>
+      <a id="image-open" class="image-open" target="_blank" rel="noopener noreferrer">Open image ↗</a>
+      <button id="lightbox-close" type="button" aria-label="Close image viewer">×</button>
+    </div>
+    <div id="lightbox-content" class="lightbox-content"><img id="lightbox-image" alt=""><p id="lightbox-error" hidden>Image unavailable in this local archive.</p></div>
+  </dialog>
+  <noscript><p class="noscript">Enable JavaScript to browse this local archive.</p></noscript>
+</body>
+</html>
