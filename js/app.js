@@ -4,7 +4,7 @@
   const ACCOUNTS = {
     "1chartmaster": { name: "1ChartMaster", global: "ARCHIVE_POSTS", src: "data/posts.js" },
     "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" },
-    "ohiain-public": { name: "ohiain 公开帖", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" }
+    "ohiain-public": { name: "ohiain (Public)", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" }
   };
   const DEFAULT_ACCOUNT = "1chartmaster";
   const TICKER_TOKEN = /^\$[a-z][a-z0-9.-]{0,9}$/i;
