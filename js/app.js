@@ -889,7 +889,7 @@
   // ---- Scrolling: sticky offsets, scrollspy, anchors -----------------------------------------
 
   function stickyTop() {
-    return (window.innerWidth < 960 ? 60 : 0) + (filterBar.hidden ? 0 : filterBar.offsetHeight);
+    return (window.innerWidth < 960 ? 132 : 0) + (filterBar.hidden ? 0 : filterBar.offsetHeight);
   }
 
   function dayIndexAt(order, offset) {
