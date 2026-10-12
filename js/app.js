@@ -3,7 +3,8 @@
 
   const ACCOUNTS = {
     "1chartmaster": { name: "1ChartMaster", global: "ARCHIVE_POSTS", src: "data/posts.js" },
-    "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" }
+    "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" },
+    "ohiain-public": { name: "ohiain 公开帖", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" }
   };
   const DEFAULT_ACCOUNT = "1chartmaster";
   const TICKER_TOKEN = /^\$[a-z][a-z0-9.-]{0,9}$/i;
@@ -459,7 +460,7 @@
       const quoteHeader = element("div", "quote-header");
       const inArchive = quote.inArchive && v.byId.has(quote.id);
       const quoteLabel = quote.timestampLabel || "Quoted post";
-      quoteHeader.append(element("span", "", inArchive ? "@" + ACCOUNTS[v.account].name + " · " + quoteLabel : quoteLabel));
+      quoteHeader.append(element("span", "", inArchive ? "@" + (ACCOUNTS[v.account].handle || ACCOUNTS[v.account].name) + " · " + quoteLabel : quoteLabel));
       if (inArchive) {
         const jump = element("a", "archive-jump", "In archive");
         jump.href = postLink(quote.id, v.account);
@@ -533,9 +534,10 @@
   function estimateEntry(entry, metrics, account) {
     const post = entry.post;
     const count = post.images.length;
+    const stacked = account === "ohiain" || account === "ohiain-public";
     let height = 2 + 2 * metrics.postPad + 24 + 33;
     height += lineCount(post.text, metrics.textWidth, 8.3) * 27.2;
-    height += gridHeight(post.images, metrics.inner, (count === 3 || count === 4) && account !== "ohiain", count === 3 && account !== "ohiain");
+    height += gridHeight(post.images, metrics.inner, (count === 3 || count === 4) && !stacked, count === 3 && !stacked);
     if (post.quote) {
       const lines = lineCount(post.quote.text, metrics.quoteTextWidth, 7.3);
       const expanded = !entry.quoteText.classList.contains("clamped");

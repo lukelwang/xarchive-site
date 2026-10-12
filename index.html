@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <script defer src="data/posts.js"></script>
   <!-- data/posts-ohiain.js is loaded by js/app.js the first time the ohiain archive is shown -->
+  <!-- data/posts-ohiain-public.js is loaded by js/app.js the first time the public archive is shown -->
   <script defer src="js/app.js"></script>
 </head>
 <body data-account="1chartmaster" data-sort="desc">
@@ -17,6 +18,7 @@
     <div class="mobile-title account-switch" role="group" aria-label="Archive account">
       <button class="account-tab" type="button" data-account="1chartmaster" aria-pressed="true">1ChartMaster</button>
       <button class="account-tab" type="button" data-account="ohiain" aria-pressed="false">ohiain</button>
+      <button class="account-tab" type="button" data-account="ohiain-public" aria-pressed="false">ohiain 公开帖</button>
     </div>
     <button id="filters-toggle" type="button" aria-expanded="false" aria-controls="sidebar">Filters</button>
   </header>
@@ -30,6 +32,7 @@
       <div class="account-tabs" role="group" aria-label="Archive account">
         <button class="account-tab" type="button" data-account="1chartmaster" aria-pressed="true">1ChartMaster</button>
         <button class="account-tab" type="button" data-account="ohiain" aria-pressed="false">ohiain</button>
+        <button class="account-tab" type="button" data-account="ohiain-public" aria-pressed="false">ohiain 公开帖</button>
       </div>
       <p id="archive-summary" class="archive-summary"></p>
       <form id="filter-form" role="search">
