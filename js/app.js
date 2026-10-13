@@ -3,6 +3,7 @@
 
   const ACCOUNTS = {
     "1chartmaster": { name: "1ChartMaster", global: "ARCHIVE_POSTS", src: "data/posts.js" },
+    "1chartmaster-public": { name: "1ChartMaster (Public)", handle: "1ChartMaster", global: "ARCHIVE_POSTS_1CHARTMASTER_PUBLIC", src: "data/posts-1chartmaster-public.js" },
     "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" },
     "ohiain-public": { name: "ohiain (Public)", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" }
   };
@@ -281,7 +282,9 @@
   }
 
   function buildView(account) {
-    const posts = dataFor(account) || [];
+    const data = dataFor(account) || [];
+    // This public dataset is stored oldest first; views use newest first.
+    const posts = account === "1chartmaster-public" ? data.slice().reverse() : data;
     const v = {
       account, entries: [], byId: new Map(), days: [], months: [], order: [], cards: null,
       container: element("div", "account-posts"), index: element("div", "day-index-list"),
@@ -889,7 +892,7 @@
   // ---- Scrolling: sticky offsets, scrollspy, anchors -----------------------------------------
 
   function stickyTop() {
-    return (window.innerWidth < 960 ? 132 : 0) + (filterBar.hidden ? 0 : filterBar.offsetHeight);
+    return (window.innerWidth < 960 ? 168 : 0) + (filterBar.hidden ? 0 : filterBar.offsetHeight);
   }
 
   function dayIndexAt(order, offset) {
