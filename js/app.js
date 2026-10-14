@@ -5,7 +5,8 @@
     "1chartmaster": { name: "1ChartMaster", global: "ARCHIVE_POSTS", src: "data/posts.js" },
     "1chartmaster-public": { name: "1ChartMaster (Public)", handle: "1ChartMaster", global: "ARCHIVE_POSTS_1CHARTMASTER_PUBLIC", src: "data/posts-1chartmaster-public.js" },
     "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" },
-    "ohiain-public": { name: "ohiain (Public)", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" }
+    "ohiain-public": { name: "ohiain (Public)", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" },
+    "mmonis": { name: "mmonis (Public)", handle: "mmonis", global: "ARCHIVE_POSTS_MMONIS", src: "data/posts-mmonis.js" }
   };
   const DEFAULT_ACCOUNT = "1chartmaster";
   const TICKER_TOKEN = /^\$[a-z][a-z0-9.-]{0,9}$/i;
