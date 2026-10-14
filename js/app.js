@@ -284,8 +284,9 @@
 
   function buildView(account) {
     const data = dataFor(account) || [];
-    // This public dataset is stored oldest first; views use newest first.
-    const posts = account === "1chartmaster-public" ? data.slice().reverse() : data;
+    // Some public datasets are stored oldest first; views use newest first.
+    const storedOldestFirst = data.length > 1 && data[0].timestamp < data[data.length - 1].timestamp;
+    const posts = storedOldestFirst ? data.slice().reverse() : data;
     const v = {
       account, entries: [], byId: new Map(), days: [], months: [], order: [], cards: null,
       container: element("div", "account-posts"), index: element("div", "day-index-list"),
