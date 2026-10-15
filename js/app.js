@@ -7,7 +7,8 @@
     "ohiain": { name: "ohiain", global: "ARCHIVE_POSTS_OHIAIN", src: "data/posts-ohiain.js" },
     "ohiain-public": { name: "ohiain (Public)", handle: "ohiain", global: "ARCHIVE_POSTS_OHIAIN_PUBLIC", src: "data/posts-ohiain-public.js" },
     "mmonis": { name: "mmonis (Public)", handle: "mmonis", global: "ARCHIVE_POSTS_MMONIS", src: "data/posts-mmonis.js" },
-    "aleabitoreddit": { name: "aleabitoreddit (Sub)", handle: "aleabitoreddit", global: "ARCHIVE_POSTS_ALEABITOREDDIT", src: "data/posts-aleabitoreddit.js" }
+    "aleabitoreddit": { name: "aleabitoreddit (Sub)", handle: "aleabitoreddit", global: "ARCHIVE_POSTS_ALEABITOREDDIT", src: "data/posts-aleabitoreddit.js" },
+    "muninn": { name: "Muninn (Public)", handle: "Muninn", global: "ARCHIVE_POSTS_MUNINN_PUBLIC", src: "data/posts-muninn-public.js" },
   };
   const DEFAULT_ACCOUNT = "1chartmaster";
   const TICKER_TOKEN = /^\$[a-z][a-z0-9.-]{0,9}$/i;
