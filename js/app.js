@@ -10,6 +10,11 @@
     "aleabitoreddit": { name: "aleabitoreddit (Sub)", handle: "aleabitoreddit", global: "ARCHIVE_POSTS_ALEABITOREDDIT", src: "data/posts-aleabitoreddit.js" },
     "muninn": { name: "Muninn (Public)", handle: "Muninn", global: "ARCHIVE_POSTS_MUNINN_PUBLIC", src: "data/posts-muninn-public.js" },
   };
+  const ARCHIVE_ACCOUNTS = Object.keys(ACCOUNTS);
+  ACCOUNTS.bookmarks = { name: "Bookmarks" };
+  const BOOKMARK_KEY = "xarchive.bookmarks.v1";
+  let bookmarkStorageReadable = true;
+  const bookmarks = readBookmarks();
   const DEFAULT_ACCOUNT = "1chartmaster";
   const TICKER_TOKEN = /^\$[a-z][a-z0-9.-]{0,9}$/i;
   const DATE_TOKEN = /^\d{4}-\d{2}-\d{2}$/;
@@ -60,6 +65,61 @@
     if (className) node.className = className;
     if (text !== undefined) node.textContent = text;
     return node;
+  }
+
+  function readBookmarks() {
+    let stored = null;
+    try { stored = window.localStorage.getItem(BOOKMARK_KEY); } catch (error) { bookmarkStorageReadable = false; }
+    if (stored !== null) {
+      try {
+        const saved = JSON.parse(stored);
+        return new Set(Array.isArray(saved) ? saved.filter(id => typeof id === "string") : []);
+      } catch (error) { return new Set(); }
+    }
+    const seed = Array.isArray(window.ARCHIVE_BOOKMARK_SEED) ? window.ARCHIVE_BOOKMARK_SEED : [];
+    const saved = new Set(seed.filter(id => typeof id === "string"));
+    persistBookmarks(saved);
+    return saved;
+  }
+
+  function persistBookmarks(saved) {
+    if (!bookmarkStorageReadable) return;
+    try { window.localStorage.setItem(BOOKMARK_KEY, JSON.stringify(Array.from(saved))); } catch (error) { /* keep bookmarks in memory */ }
+  }
+
+  function updateBookmarkButton(button, id) {
+    const saved = bookmarks.has(id);
+    button.setAttribute("aria-pressed", String(saved));
+    button.setAttribute("aria-label", (saved ? "Remove bookmark from" : "Bookmark") + " post " + id);
+    button.title = saved ? "Remove bookmark" : "Bookmark this post";
+  }
+
+  function updateBookmarkTabs() {
+    document.querySelectorAll('.account-tab[data-account="bookmarks"]').forEach(button => {
+      button.textContent = "★ Bookmarks (" + formatCount(bookmarks.size) + ")";
+    });
+  }
+
+  function toggleBookmark(id) {
+    if (bookmarks.has(id)) bookmarks.delete(id);
+    else bookmarks.add(id);
+    persistBookmarks(bookmarks);
+    Object.values(views).forEach(v => {
+      const entry = v.byId.get(id);
+      if (entry) updateBookmarkButton(entry.bookmark, id);
+    });
+    updateBookmarkTabs();
+    delete views.bookmarks;
+    if (view && view.account === "bookmarks") {
+      clearTimeout(debounce);
+      cancelSettle();
+      readControls();
+      if (state.p === id && !bookmarks.has(id)) state.p = "";
+      writeHash();
+      views.bookmarks = buildBookmarksView();
+      present(views.bookmarks);
+      showNote("");
+    }
   }
 
   function validDate(value) {
@@ -234,6 +294,16 @@
 
   async function ensureView(account, seq) {
     if (views[account]) return views[account];
+    if (account === "bookmarks") {
+      if (ARCHIVE_ACCOUNTS.some(source => !dataFor(source))) showArchiveStatus(account);
+      try { await Promise.all(ARCHIVE_ACCOUNTS.map(loadData)); }
+      catch (error) {
+        if (isCurrentRoute(seq)) showArchiveStatus(account, true);
+        return null;
+      }
+      if (!views[account]) views[account] = buildBookmarksView();
+      return views[account];
+    }
     if (!dataFor(account)) {
       showArchiveStatus(account);
       try { await loadData(account); }
@@ -247,7 +317,7 @@
   }
 
   async function findAccount(id, seq) {
-    const order = [state.a, ...Object.keys(ACCOUNTS).filter(account => account !== state.a)];
+    const order = [state.a, ...ARCHIVE_ACCOUNTS.filter(account => account !== state.a)];
     let failed = null;
     for (const account of order) {
       if (!isCurrentRoute(seq)) return null;
@@ -284,8 +354,21 @@
     };
   }
 
-  function buildView(account) {
-    const data = dataFor(account) || [];
+  function buildBookmarksView() {
+    const saved = new Map();
+    const sources = new Map();
+    ARCHIVE_ACCOUNTS.forEach(account => {
+      (dataFor(account) || []).forEach(post => {
+        if (!bookmarks.has(post.id) || saved.has(post.id)) return;
+        saved.set(post.id, post);
+        sources.set(post.id, account);
+      });
+    });
+    const posts = Array.from(saved.values()).sort((a, b) => a.timestamp < b.timestamp ? 1 : a.timestamp > b.timestamp ? -1 : 0);
+    return buildView("bookmarks", posts, sources);
+  }
+
+  function buildView(account, data = dataFor(account) || [], sources = null) {
     // Some public datasets are stored oldest first; views use newest first.
     const storedOldestFirst = data.length > 1 && data[0].timestamp < data[data.length - 1].timestamp;
     const posts = storedOldestFirst ? data.slice().reverse() : data;
@@ -298,6 +381,7 @@
     const monthMap = new Map();
     posts.forEach(post => {
       const entry = prepare(post);
+      entry.account = sources ? sources.get(post.id) : account;
       v.entries.push(entry);
       v.byId.set(post.id, entry);
     });
@@ -449,13 +533,20 @@
     const post = entry.post;
     const article = element("article", "post");
     article.id = "p-" + post.id;
+    article.dataset.account = entry.account;
     article.tabIndex = -1;
     const header = element("header", "post-header");
     const permalink = element("a", "post-time", post.timestampLabel);
     permalink.href = postLink(post.id, v.account);
     permalink.title = "Link to this archived post";
     permalink.addEventListener("click", event => { event.preventDefault(); jumpToPost(post.id); });
-    header.append(permalink, originalLink(post.url, "View original on X ↗"));
+    if (v.account === "bookmarks") header.append(element("span", "post-account", ACCOUNTS[entry.account].name));
+    const bookmark = element("button", "bookmark-toggle", "★");
+    bookmark.type = "button";
+    updateBookmarkButton(bookmark, post.id);
+    bookmark.addEventListener("click", () => toggleBookmark(post.id));
+    entry.bookmark = bookmark;
+    header.append(permalink, originalLink(post.url, "View original on X ↗"), bookmark);
     const text = textWithTickers(post.text, "post-text");
     article.append(header, text);
     entry.paragraphs.push(text);
@@ -467,7 +558,8 @@
       const quoteHeader = element("div", "quote-header");
       const inArchive = quote.inArchive && v.byId.has(quote.id);
       const quoteLabel = quote.timestampLabel || "Quoted post";
-      quoteHeader.append(element("span", "", inArchive ? "@" + (ACCOUNTS[v.account].handle || ACCOUNTS[v.account].name) + " · " + quoteLabel : quoteLabel));
+      const quoteAccount = inArchive ? v.byId.get(quote.id).account : entry.account;
+      quoteHeader.append(element("span", "", inArchive ? "@" + (ACCOUNTS[quoteAccount].handle || ACCOUNTS[quoteAccount].name) + " · " + quoteLabel : quoteLabel));
       if (inArchive) {
         const jump = element("a", "archive-jump", "In archive");
         jump.href = postLink(quote.id, v.account);
@@ -583,7 +675,7 @@
       day.dirty = false;
       day.estimate = 65;
       day.entries.forEach(entry => {
-        entry.estimate = estimateEntry(entry, metrics, v.account);
+        entry.estimate = estimateEntry(entry, metrics, entry.account);
         if (!entry.card.hidden) day.estimate += entry.estimate;
       });
       setIntrinsic(day, true);
@@ -722,7 +814,7 @@
         + " – " + dateLabel(newest, { month: "short", day: "numeric", year: "numeric" });
       from.min = to.min = oldest;
       from.max = to.max = newest;
-    } else byId("archive-summary").textContent = "No archive data loaded";
+    } else byId("archive-summary").textContent = v.account === "bookmarks" ? "No bookmarked posts" : "No archive data loaded";
     highlightGen += 1;
     if (highlight) highlight.clear();
     if (v.estimateWidth !== layoutMetrics().width) refreshEstimates(v, true);
@@ -1053,7 +1145,7 @@
     clearTimeout(anchorTimer);
     const previous = view && view.account;
     let missing = false;
-    if (state.p) {
+    if (state.p && state.a !== "bookmarks") {
       let account;
       try { account = await findAccount(state.p, seq); }
       catch (error) {
@@ -1070,6 +1162,7 @@
     if (!isCurrentRoute(seq)) return;
     routing = false;
     if (!v) return;
+    if (state.p && state.a === "bookmarks") missing = !v.byId.has(state.p);
     const cleared = revealTarget(v);
     syncControls();
     writeHash(false, true);
@@ -1310,6 +1403,14 @@
   byId("jump-restore").addEventListener("click", () => history.back());
   byId("jump-note-close").addEventListener("click", () => { byId("jump-note").hidden = true; });
   byId("feed-status-retry").addEventListener("click", () => route());
+  document.querySelectorAll(".account-switch, .account-tabs").forEach(group => {
+    const button = element("button", "account-tab");
+    button.type = "button";
+    button.dataset.account = "bookmarks";
+    button.setAttribute("aria-pressed", "false");
+    group.append(button);
+  });
+  updateBookmarkTabs();
   document.querySelectorAll(".account-tab").forEach(button => {
     button.addEventListener("click", () => switchAccount(button.dataset.account));
   });

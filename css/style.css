@@ -56,6 +56,7 @@ h1 span { display: block; font-weight: 400; }
 .account-tabs { gap: 8px; margin: 12px 0; }
 .account-tab { flex: 1; padding: 8px 6px; font-size: 14px; color: var(--text); background: var(--card); border: 1px solid var(--control-border); border-radius: 6px; white-space: nowrap; }
 .account-tab[aria-pressed="true"] { color: var(--card); background: var(--accent); border-color: var(--accent); font-weight: 600; }
+.account-tab[data-account="bookmarks"] { font-variant-numeric: tabular-nums; }
 .archive-summary { color: var(--muted); font-size: 13px; margin: 10px 0 28px; }
 label, legend { font-size: 14px; font-weight: 600; }
 input[type="search"] { width: 100%; padding: 9px 10px; font-size: 14px; margin-top: 5px; }
@@ -102,6 +103,9 @@ input[type="date"] { min-width: 0; width: 100%; display: block; font-size: 12px;
 .post-header { display: flex; justify-content: space-between; align-items: center; gap: 0 12px; flex-wrap: wrap; margin: -3px 0 11px; font-size: 12px; color: var(--muted); }
 .post-header a { text-decoration: none; display: inline-block; padding: 3px 0; }
 .post-time { color: var(--muted); }
+.bookmark-toggle { flex: none; min-width: 36px; min-height: 36px; padding: 2px 8px; color: var(--muted); background: transparent; border-color: var(--border); font-size: 20px; line-height: 1; }
+.bookmark-toggle:hover { color: var(--accent); background: var(--accent-soft); border-color: var(--accent); }
+.bookmark-toggle[aria-pressed="true"] { color: var(--card); background: var(--accent); border-color: var(--accent); }
 .post-text, .quote-text { margin: 0; max-width: 70ch; white-space: pre-wrap; }
 .text-link { overflow-wrap: anywhere; }
 .cashtag { padding: 0 3px; border: 0; background: var(--accent-soft); color: var(--accent); border-radius: 3px; font: inherit; line-height: inherit; }
@@ -114,9 +118,15 @@ input[type="date"] { min-width: 0; width: 100%; display: block; font-size: 12px;
 body[data-account="ohiain"] .post > .image-grid.count-3,
 body[data-account="ohiain"] .post > .image-grid.count-4,
 body[data-account="ohiain-public"] .post > .image-grid.count-3,
-body[data-account="ohiain-public"] .post > .image-grid.count-4 { grid-template-columns: minmax(0, 1fr); }
+body[data-account="ohiain-public"] .post > .image-grid.count-4,
+body[data-account="bookmarks"] .post[data-account="ohiain"] > .image-grid.count-3,
+body[data-account="bookmarks"] .post[data-account="ohiain"] > .image-grid.count-4,
+body[data-account="bookmarks"] .post[data-account="ohiain-public"] > .image-grid.count-3,
+body[data-account="bookmarks"] .post[data-account="ohiain-public"] > .image-grid.count-4 { grid-template-columns: minmax(0, 1fr); }
 body[data-account="ohiain"] .post > .image-grid.count-3 > :first-child,
-body[data-account="ohiain-public"] .post > .image-grid.count-3 > :first-child { grid-column: auto; }
+body[data-account="ohiain-public"] .post > .image-grid.count-3 > :first-child,
+body[data-account="bookmarks"] .post[data-account="ohiain"] > .image-grid.count-3 > :first-child,
+body[data-account="bookmarks"] .post[data-account="ohiain-public"] > .image-grid.count-3 > :first-child { grid-column: auto; }
 .image-button { padding: 0; display: block; width: 100%; overflow: hidden; background: var(--quote); border-color: var(--border); }
 .image-button img { display: block; width: 100%; height: auto; object-fit: contain; }
 .image-unavailable { display: block; padding: 24px 12px; font-size: 13px; color: var(--muted); }
