@@ -9,6 +9,7 @@
     "mmonis": { name: "mmonis (Public)", handle: "mmonis", global: "ARCHIVE_POSTS_MMONIS", src: "data/posts-mmonis.js" },
     "aleabitoreddit": { name: "aleabitoreddit (Sub)", handle: "aleabitoreddit", global: "ARCHIVE_POSTS_ALEABITOREDDIT", src: "data/posts-aleabitoreddit.js" },
     "muninn": { name: "Muninn (Public)", handle: "Muninn", global: "ARCHIVE_POSTS_MUNINN_PUBLIC", src: "data/posts-muninn-public.js" },
+    "lindaraschke": { name: "LindaRaschke (Public)", handle: "LindaRaschke", global: "ARCHIVE_POSTS_LINDARASCHKE_PUBLIC", src: "data/posts-lindaraschke-public.js" },
   };
   const ARCHIVE_ACCOUNTS = Object.keys(ACCOUNTS);
   ACCOUNTS.bookmarks = { name: "Bookmarks" };
